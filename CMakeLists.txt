@@ -8,13 +8,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/release)
 
 set(SOURCES
     ${PROJECT_SOURCE_DIR}/main.cpp
-    ${PROJECT_SOURCE_DIR}/scene3d.cpp
 )
 
 set(HEADERS
-    ${PROJECT_SOURCE_DIR}/scene3d.h
 )
-
 
 if(CMAKE_BUILD_TYPE MATCHES Release)
     set(VTK_DIR "/home/kdoz/Libraries/VTK/build/release")
@@ -24,13 +21,10 @@ endif()
 
 find_package(VTK REQUIRED)
 
-#include(CTest)
-#enable_testing()
-
+add_subdirectory(SceneModule)
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
                 
-target_link_libraries(${PROJECT_NAME} ${VTK_LIBRARIES})
-
-#set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-#set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-#include(CPack)
+target_link_libraries(${PROJECT_NAME} 
+    SceneLibrary
+    ${VTK_LIBRARIES}
+)

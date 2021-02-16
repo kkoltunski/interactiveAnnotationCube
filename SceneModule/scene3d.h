@@ -16,6 +16,8 @@ public:
     Scene3D(int _dimensionX, int _dimensionY);
 
     void initialize();
+    void start();
+    vSP<vtkRenderWindowInteractor> getInteractor();
 
 private:
     int m_sceneDimension[2];
