@@ -11,6 +11,7 @@ set(SOURCES
 )
 
 set(HEADERS
+    ${PROJECT_SOURCE_DIR}/typedefs.h
 )
 
 if(CMAKE_BUILD_TYPE MATCHES Release)

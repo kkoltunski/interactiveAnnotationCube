@@ -1,13 +1,12 @@
 #ifndef SCENE3D_H
 #define SCENE3D_H
 
+#include "../typedefs.h"
+
 #include <vtkSmartPointer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
-
-template<typename T>
-using vSP = vtkSmartPointer<T>;
 
 class Scene3D{
 public:
