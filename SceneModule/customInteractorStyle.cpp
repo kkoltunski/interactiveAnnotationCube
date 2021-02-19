@@ -96,7 +96,7 @@ vSP<vtkUnsignedCharArray> CustomInteractorStyle::getCellData(size_t _cellID, vtk
   int numberOfCells = m_pickedPolyData->GetNumberOfCells();
   double tupleData[4] = {0, 0, 0, 0};
 
-  cellData->SetNumberOfComponents(4);
+  cellData->SetNumberOfComponents(3);
   cellData->SetNumberOfTuples(numberOfCells);
 
   auto lut = vtkLookupTable::SafeDownCast(_pickedActorMapper->GetLookupTable());
