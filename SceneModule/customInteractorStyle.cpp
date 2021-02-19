@@ -1,15 +1,15 @@
 #include "customInteractorStyle.h"
 
-#include <vtkRenderWindowInteractor.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderer.h>
 #include <vtkCellPicker.h>
-#include <vtkCellData.h>
-#include <vtkPolyData.h>
-#include <vtkDataSetMapper.h>
-#include <vtkActor.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkUnsignedCharArray.h>
+#include <vtkActor.h>
+#include <vtkPolyData.h>
+#include <vtkMapper.h>
+#include <vtkCellData.h>
 #include <vtkLookupTable.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindow.h>
 #include <vtkNamedColors.h>
 #include <vtkVertexGlyphFilter.h>
 #include <vtkLine.h>
@@ -19,66 +19,66 @@
 vtkStandardNewMacro(CustomInteractorStyle);
 
 void CustomInteractorStyle::OnLeftButtonDown(){
-    auto picker = vSP<vtkCellPicker>::New();
-    int eventPosition[2] {0, 0};
+  auto picker = vSP<vtkCellPicker>::New();
+  int eventPosition[2] {0, 0};
 
-    this->GetInteractor()->GetEventPosition(eventPosition);
-    picker->Pick(eventPosition[0], eventPosition[1], 0, this->GetDefaultRenderer());
-    auto cellID = picker->GetCellId();
+  this->GetInteractor()->GetEventPosition(eventPosition);
+  picker->Pick(eventPosition[0], eventPosition[1], 0, this->GetDefaultRenderer());
+  auto cellID = picker->GetCellId();
 
-    if(cellID != -1){
-      vSP<vtkUnsignedCharArray> cellData = vSP<vtkUnsignedCharArray>::New();
-      double tupleData[4] = {0, 0, 0, 0};
-      auto pickedActorMapper = picker->GetActor()->GetMapper();
-      m_pickedPolyData = vtkPolyData::SafeDownCast(pickedActorMapper->GetInput());
-      m_polyDataOriginalScalars = m_pickedPolyData->GetCellData()->GetScalars();
-      auto numberOfCells = m_pickedPolyData->GetNumberOfCells();
+  if(cellID != -1){
+    vSP<vtkUnsignedCharArray> cellData = vSP<vtkUnsignedCharArray>::New();
+    double tupleData[4] = {0, 0, 0, 0};
+    auto pickedActorMapper = picker->GetActor()->GetMapper();
+    m_pickedPolyData = vtkPolyData::SafeDownCast(pickedActorMapper->GetInput());
+    m_polyDataOriginalScalars = m_pickedPolyData->GetCellData()->GetScalars();
+    auto numberOfCells = m_pickedPolyData->GetNumberOfCells();
 
-      MarkCellEdges(pickedActorMapper->GetInput()->GetCell(cellID));
+    MarkCellEdges(pickedActorMapper->GetInput()->GetCell(cellID));
 
-      cellData->SetNumberOfComponents(3);
-      cellData->SetNumberOfTuples(numberOfCells);
+    cellData->SetNumberOfComponents(3);
+    cellData->SetNumberOfTuples(numberOfCells);
 
-      auto lut = vtkLookupTable::SafeDownCast(pickedActorMapper->GetLookupTable());
-      lut->SetHueRange(.0, .667);
-      lut->SetSaturationRange(.0, .0);
+    auto lut = vtkLookupTable::SafeDownCast(pickedActorMapper->GetLookupTable());
+    lut->SetHueRange(.0, .667);
+    lut->SetSaturationRange(.0, .0);
 
-      for (int i = 0; i < numberOfCells; i++)
-      {
-        if(i != cellID){
-          lut->GetColor(i, tupleData);
-          tupleData[0] *= 255;
-          tupleData[1] *= 255;
-          tupleData[2] *= 255;
-          tupleData[3] = 255;
-        }
-        else{
-          tupleData[0] = 0;
-          tupleData[1] = 255;
-          tupleData[2] = 0;
-          tupleData[3] = 128;
-        }
-
-        cellData->InsertTuple(i, tupleData);
+    for (int i = 0; i < numberOfCells; i++)
+    {
+      if(i != cellID){
+        lut->GetColor(i, tupleData);
+        tupleData[0] *= 255;
+        tupleData[1] *= 255;
+        tupleData[2] *= 255;
+        tupleData[3] = 255;
+      }
+      else{
+        tupleData[0] = 0;
+        tupleData[1] = 255;
+        tupleData[2] = 0;
+        tupleData[3] = 128;
       }
 
-      m_pickedPolyData->GetCellData()->SetScalars(cellData);
-      this->GetDefaultRenderer()->GetRenderWindow()->Render();
+      cellData->InsertTuple(i, tupleData);
     }
 
-    vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
+    m_pickedPolyData->GetCellData()->SetScalars(cellData);
+    this->GetDefaultRenderer()->GetRenderWindow()->Render();
+  }
+
+  vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
 }
 
 void CustomInteractorStyle::OnLeftButtonUp(){
-    if(m_pickedPolyData){
-      m_pickedPolyData->GetCellData()->SetScalars(m_polyDataOriginalScalars);
-      this->GetDefaultRenderer()->RemoveActor(m_edgesActor);
+  if(m_pickedPolyData){
+    m_pickedPolyData->GetCellData()->SetScalars(m_polyDataOriginalScalars);
+    this->GetDefaultRenderer()->RemoveActor(m_edgesActor);
 
-      m_pickedPolyData = nullptr;
-      m_edgesActor->Delete();
-    }
+    m_pickedPolyData = nullptr;
+    m_edgesActor->Delete();
+  }
 
-    vtkInteractorStyleTrackballCamera::OnLeftButtonUp();
+  vtkInteractorStyleTrackballCamera::OnLeftButtonUp();
 }
 
 void CustomInteractorStyle::MarkCellEdges(vtkCell* _pickedCell){

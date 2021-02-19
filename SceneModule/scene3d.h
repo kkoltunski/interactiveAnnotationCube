@@ -3,10 +3,11 @@
 
 #include "../typedefs.h"
 
-#include <vtkSmartPointer.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
+
+class vtkRenderWindowInteractor;
+class vtkRenderer;
+class vtkRenderWindow;
 
 class Scene3D{
 public:
@@ -16,7 +17,8 @@ public:
 
     void initialize();
     void start();
-    vSP<vtkRenderWindowInteractor> getInteractor();
+    vtkRenderWindowInteractor* getInteractor();
+    vtkRenderer* getRenderer();
 
 private:
     int m_sceneDimension[2];
