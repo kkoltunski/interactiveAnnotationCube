@@ -1,0 +1,8 @@
+This project is for train basic functionalities of VTK 9.0.1 library.
+
+-Scene3D class is main application window.
+-CustomInteractorStyle is interactor which mark cell on pressed actor.
+(Pressed cell change its color. Edges and vertexes are also exponed)
+-actorsPool is used as scene actors container.
+
+Feel free to use this code if you need.
