@@ -7,10 +7,12 @@
 #include <vtkInteractorStyleTrackballCamera.h>
 
 class vtkActor;
+class vtkMapper;
 class vtkCell;
 class vtkPolyData;
 class vtkDataArray;
 class vtkInteractorStyleTrackballCamera;
+class vtkUnsignedCharArray;
 
 class CustomInteractorStyle : public vtkInteractorStyleTrackballCamera{
 public:
@@ -20,7 +22,9 @@ public:
 	virtual void OnLeftButtonUp();
 
 protected:
-	void MarkCellEdges(vtkCell* _pickedCell);
+	void markCellEdges(vtkCell* _pickedCell);
+	vSP<vtkUnsignedCharArray> getCellData(size_t _cellID,
+										vtkMapper* _pickedActorMapper);
 
 	CustomInteractorStyle() = default;
 	virtual ~CustomInteractorStyle() = default;

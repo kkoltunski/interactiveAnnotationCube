@@ -27,40 +27,13 @@ void CustomInteractorStyle::OnLeftButtonDown(){
   auto cellID = picker->GetCellId();
 
   if(cellID != -1){
-    vSP<vtkUnsignedCharArray> cellData = vSP<vtkUnsignedCharArray>::New();
-    double tupleData[4] = {0, 0, 0, 0};
     auto pickedActorMapper = picker->GetActor()->GetMapper();
     m_pickedPolyData = vtkPolyData::SafeDownCast(pickedActorMapper->GetInput());
     m_polyDataOriginalScalars = m_pickedPolyData->GetCellData()->GetScalars();
     auto numberOfCells = m_pickedPolyData->GetNumberOfCells();
 
-    MarkCellEdges(pickedActorMapper->GetInput()->GetCell(cellID));
-
-    cellData->SetNumberOfComponents(3);
-    cellData->SetNumberOfTuples(numberOfCells);
-
-    auto lut = vtkLookupTable::SafeDownCast(pickedActorMapper->GetLookupTable());
-    lut->SetHueRange(.0, .667);
-    lut->SetSaturationRange(.0, .0);
-
-    for (int i = 0; i < numberOfCells; i++)
-    {
-      if(i != cellID){
-        lut->GetColor(i, tupleData);
-        tupleData[0] *= 255;
-        tupleData[1] *= 255;
-        tupleData[2] *= 255;
-        tupleData[3] = 255;
-      }
-      else{
-        tupleData[0] = 0;
-        tupleData[1] = 255;
-        tupleData[2] = 0;
-        tupleData[3] = 128;
-      }
-
-      cellData->InsertTuple(i, tupleData);
-    }
+    this->markCellEdges(pickedActorMapper->GetInput()->GetCell(cellID));
+    auto cellData = this->getCellData(cellID, pickedActorMapper);
 
     m_pickedPolyData->GetCellData()->SetScalars(cellData);
     this->GetDefaultRenderer()->GetRenderWindow()->Render();
@@ -81,14 +54,14 @@ void CustomInteractorStyle::OnLeftButtonUp(){
   vtkInteractorStyleTrackballCamera::OnLeftButtonUp();
 }
 
-void CustomInteractorStyle::MarkCellEdges(vtkCell* _pickedCell){
+void CustomInteractorStyle::markCellEdges(vtkCell* _pickedCell){
   vSP<vtkNamedColors> colorGenerator = vSP<vtkNamedColors>::New();
   vSP<vtkPolyData> edgesPolyData = vSP<vtkPolyData>::New();
   vSP<vtkCellArray> edgeLines = vSP<vtkCellArray>::New();
   vSP<vtkPolyDataMapper> mapper = vSP<vtkPolyDataMapper>::New();
   vSP<vtkVertexGlyphFilter> vertexGlyphFilter = vSP<vtkVertexGlyphFilter>::New();
   m_edgesActor = vtkActor::New();
-    auto points = _pickedCell->GetNumberOfPoints();
+  auto points = _pickedCell->GetNumberOfPoints();
 
   edgesPolyData->SetPoints(_pickedCell->GetPoints());
   vertexGlyphFilter->AddInputData(edgesPolyData);
@@ -116,4 +89,39 @@ void CustomInteractorStyle::MarkCellEdges(vtkCell* _pickedCell){
   actorProperties->SetColor(colorGenerator->GetColor3d("HotPink").GetData());
 
   this->GetDefaultRenderer()->AddActor(m_edgesActor);
+}
+
+vSP<vtkUnsignedCharArray> CustomInteractorStyle::getCellData(size_t _cellID, vtkMapper* _pickedActorMapper){
+  vSP<vtkUnsignedCharArray> cellData = vSP<vtkUnsignedCharArray>::New();
+  int numberOfCells = m_pickedPolyData->GetNumberOfCells();
+  double tupleData[4] = {0, 0, 0, 0};
+
+  cellData->SetNumberOfComponents(4);
+  cellData->SetNumberOfTuples(numberOfCells);
+
+  auto lut = vtkLookupTable::SafeDownCast(_pickedActorMapper->GetLookupTable());
+  lut->SetHueRange(.0, .667);
+  lut->SetSaturationRange(.0, .0);
+  lut->Build();
+
+  for (int i = 0; i < numberOfCells; i++)
+  {
+    if(i != _cellID){
+      lut->GetColor(i, tupleData);
+      tupleData[0] *= 255;
+      tupleData[1] *= 255;
+      tupleData[2] *= 255;
+      tupleData[3] = 255;
+    }
+    else{
+      tupleData[0] = 0;
+      tupleData[1] = 255;
+      tupleData[2] = 0;
+      tupleData[3] = 128;
+    }
+
+    cellData->InsertTuple(i, tupleData);
+  }
+
+  return cellData;
 }
