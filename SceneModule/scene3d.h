@@ -2,12 +2,13 @@
 #define SCENE3D_H
 
 #include "../typedefs.h"
+#include "actorsPool.h"
 
 #include <vtkRenderWindowInteractor.h>
 
 class vtkRenderWindowInteractor;
-class vtkRenderer;
 class vtkRenderWindow;
+class ActorsPool;
 
 class Scene3D{
 public:
@@ -18,12 +19,11 @@ public:
     void initialize();
     void start();
     vtkRenderWindowInteractor* getInteractor();
-    vtkRenderer* getRenderer();
 
 private:
     int m_sceneDimension[2];
 
-    vSP<vtkRenderer> m_renderer;
+    ActorsPool m_actorsPool;
     vSP<vtkRenderWindow> m_renderWindow;
     vSP<vtkRenderWindowInteractor> m_windowInteractor;
 };

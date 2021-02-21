@@ -10,6 +10,8 @@
 #include <vtkRenderWindow.h>
 #include "SceneModule/scene3d.h"
 
+#include <vtkSphereSource.h>
+
 VTK_MODULE_INIT(vtkRenderingOpenGL2)
 
 int main(int, char**) {
@@ -17,18 +19,6 @@ int main(int, char**) {
   scene.initialize();
 
 vSP<vtkNamedColors> colors = vSP<vtkNamedColors>::New();
-
-vSP<vtkCylinderSource> cylinder = vSP<vtkCylinderSource>::New();
-cylinder->SetResolution(8);
-
-vSP<vtkPolyDataMapper> cylinderMapper = vSP<vtkPolyDataMapper>::New();
-cylinderMapper->SetInputConnection(cylinder->GetOutputPort());
-
-vSP<vtkActor> cylinderActor = vSP<vtkActor>::New();
-cylinderActor->SetMapper(cylinderMapper);
-scene.getRenderer()->AddActor(cylinderActor);
-scene.getRenderer()->ResetCamera();
-scene.getRenderer()->GetRenderWindow()->Render();
 
   // A cube with labeled faces.
   vtkSmartPointer<vtkAnnotatedCubeActor> cube =
