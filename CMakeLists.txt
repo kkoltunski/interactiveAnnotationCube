@@ -10,10 +10,6 @@ set(SOURCES
     ${PROJECT_SOURCE_DIR}/main.cpp
 )
 
-set(HEADERS
-    ${PROJECT_SOURCE_DIR}/typedefs.h
-)
-
 if(CMAKE_BUILD_TYPE MATCHES Release)
     set(VTK_DIR "/home/kdoz/Libraries/VTK/build/release")
 elseif(CMAKE_BUILD_TYPE MATCHES Debug)
@@ -23,9 +19,11 @@ endif()
 find_package(VTK REQUIRED)
 
 add_subdirectory(SceneModule)
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+add_executable(${PROJECT_NAME} ${SOURCES})
                 
 target_link_libraries(${PROJECT_NAME} 
     SceneLibrary
     ${VTK_LIBRARIES}
 )
+
+target_link_directories(${PROJECT_NAME} PUBLIC ${CMAKE_HOME_DIRECTORY})
