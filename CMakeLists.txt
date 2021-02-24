@@ -19,6 +19,7 @@ endif()
 find_package(VTK REQUIRED)
 
 add_subdirectory(SceneModule)
+add_subdirectory(uTests)
 add_executable(${PROJECT_NAME} ${SOURCES})
                 
 target_link_libraries(${PROJECT_NAME} 
