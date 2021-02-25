@@ -3,6 +3,7 @@
 
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
 
 class Scene3DTestsFixture : public ::testing::Test {
 protected:
@@ -18,4 +19,19 @@ protected:
 TEST_F(Scene3DTestsFixture, constructorCheck){
     ASSERT_NE(m_scene.getRenderer(), nullptr);
     ASSERT_NE(m_scene.getInteractor(), nullptr);
+};
+
+TEST_F(Scene3DTestsFixture, initializationCheck){
+    m_scene.initialize();
+    
+    auto interactor = m_scene.getInteractor();
+    auto renderer = m_scene.getRenderer();
+    int renderWindowDimension[2]{
+        m_scene.getRenderer()->GetRenderWindow()->GetSize()[0],
+        m_scene.getRenderer()->GetRenderWindow()->GetSize()[1]
+    };
+
+    EXPECT_EQ(renderWindowDimension[0], m_initialDimension[0]);
+    EXPECT_EQ(renderWindowDimension[1], m_initialDimension[1]);
+    ASSERT_EQ(interactor->GetRenderWindow(), renderer->GetRenderWindow());
 };
