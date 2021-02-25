@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "SceneModuleTests/scene3dTests.h"
 #include "SceneModuleTests/customInteractorStyleTests.h"
+#include "SceneModuleTests/actorsPoolTests.h"
 
 #include <vtkAutoInit.h>
 
